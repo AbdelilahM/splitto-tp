@@ -29,4 +29,16 @@ describe('simplifyDebts', () => {
       { from: 'c', to: 'a', amount: 10 }
     ]);
   });
+
+  it('balances vides - aucun règlement', () => {
+    const balances: Balances = {};
+    const result = simplifyDebts(balances);
+    expect(result).toEqual([]);
+  });
+
+  it('balances équilibrées - aucun règlement', () => {
+    const balances: Balances = { a: 0, b: 0, c: 0 };
+    const result = simplifyDebts(balances);
+    expect(result).toEqual([]);
+  });
 });
