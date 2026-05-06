@@ -14,4 +14,10 @@ describe('simplifyDebts', () => {
     const result = simplifyDebts(balances);
     expect(result).toEqual([{ from: 'b', to: 'a', amount: 10 }]);
   });
+
+  it('3 personnes en triangle - un règlement suffit', () => {
+    const balances: Balances = { a: 10, b: 0, c: -10 };
+    const result = simplifyDebts(balances);
+    expect(result).toEqual([{ from: 'c', to: 'a', amount: 10 }]);
+  });
 });
