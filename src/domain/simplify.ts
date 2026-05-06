@@ -10,13 +10,32 @@
 import type { Balances, Settlement } from './types';
 
 export function simplifyDebts(balances: Balances): Settlement[] {
-  const entries = Object.entries(balances);
-  if (entries.length === 2) {
-    const [creditor] = entries.filter(([, balance]) => balance > 0);
-    const [debtor] = entries.filter(([, balance]) => balance < 0);
-    if (creditor && debtor) {
-      return [{ from: debtor[0], to: creditor[0], amount: creditor[1] }];
+  const settlements: Settlement[] = [];
+
+  // Séparer créditeurs et débiteurs
+  const creditors = Object.entries(balances)
+    .filter(([, balance]) => balance > 0)
+    .sort(([, a], [, b]) => b - a); // Plus gros créditeurs d'abord
+
+  const debtors = Object.entries(balances)
+    .filter(([, balance]) => balance < 0)
+    .sort(([, a], [, b]) => a - b); // Plus gros débiteurs d'abord (plus négatif)
+
+  // Pour chaque débiteur, payer les créditeurs
+  for (const [debtorId, debtorBalance] of debtors) {
+    let remaining = -debtorBalance; // Montant à payer (positif)
+
+    for (const [creditorId, creditorBalance] of creditors) {
+      if (remaining <= 0) break;
+      if (creditorBalance <= 0) continue;
+
+      const amount = Math.min(remaining, creditorBalance);
+      settlements.push({ from: debtorId, to: creditorId, amount });
+
+      remaining -= amount;
+      // Note: on ne modifie pas les balances ici car c'est fonctionnel pur
     }
   }
-  return [];
+
+  return settlements;
 }
