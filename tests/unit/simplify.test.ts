@@ -20,4 +20,13 @@ describe('simplifyDebts', () => {
     const result = simplifyDebts(balances);
     expect(result).toEqual([{ from: 'c', to: 'a', amount: 10 }]);
   });
+
+  it('4 personnes circulaire complexe - 2 règlements minimum', () => {
+    const balances: Balances = { a: 30, b: -20, c: -10, d: 0 };
+    const result = simplifyDebts(balances);
+    expect(result).toEqual([
+      { from: 'b', to: 'a', amount: 20 },
+      { from: 'c', to: 'a', amount: 10 }
+    ]);
+  });
 });
