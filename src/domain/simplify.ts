@@ -10,5 +10,13 @@
 import type { Balances, Settlement } from './types';
 
 export function simplifyDebts(balances: Balances): Settlement[] {
-  throw new Error('Not implemented — voir SUJET.md exercice 2');
+  const entries = Object.entries(balances);
+  if (entries.length === 2) {
+    const [creditor] = entries.filter(([, balance]) => balance > 0);
+    const [debtor] = entries.filter(([, balance]) => balance < 0);
+    if (creditor && debtor) {
+      return [{ from: debtor[0], to: creditor[0], amount: creditor[1] }];
+    }
+  }
+  return [];
 }
